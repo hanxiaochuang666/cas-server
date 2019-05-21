@@ -1,0 +1,7 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.bykj.sso.config.CustomAuthenticationConfiguration,\
+  com.bykj.sso.config.CustomerAuthWebflowConfiguration,\
+  com.bykj.sso.config.CustomControllerConfigurer
+  
+  
+

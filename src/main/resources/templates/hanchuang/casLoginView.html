@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>登录</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
+    <meta name="author" content="hanchuang"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" media="screen" th:href="@{${#themes.code('hanchuang.standard.css.style')}}">
+    <link rel="stylesheet" th:href="@{${#themes.code('hanchuang.standard.css.reset')}}"/>
+    <!--<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>-->
+    <script th:src="@{${#themes.code('hanchuang.javascript.jquery')}}"></script>
+</head>
+<body>
+
+<div id="particles-js">
+    <form id="fm1" name="fm1" action="login" method="post" th:object="${credential}">
+
+        <div class="login" id="login">
+            <div class="login-top">
+                登录
+            </div>
+            <div class="login-center clearfix">
+                <div class="login-center-img"><img
+                        th:src="@{${#themes.code('hanchuang.login.images.path')}+'/name.png'}" alt=""/></div>
+                <div class="login-center-input">
+                    <input type="text" name="" value="" placeholder="请输入您的用户名" onfocus="this.placeholder=''"
+                           onblur="this.placeholder='请输入您的用户名'"
+                           th:disabled="${guaEnabled}"
+                           th:field="*{username}"
+                           th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                           autocomplete="off"/>
+                    <div class="login-center-input-text">用户名</div>
+                </div>
+            </div>
+            <div class="login-center clearfix">
+                <div class="login-center-img"><img
+                        th:src="@{${#themes.code('hanchuang.login.images.path')}+'/password.png'}"/></div>
+                <div class="login-center-input">
+                    <input type="password" name="" value="" placeholder="请输入您的密码" onfocus="this.placeholder=''"
+                           onblur="this.placeholder='请输入您的密码'"
+                           th:accesskey="#{screen.welcome.label.password.accesskey}"
+                           th:field="*{password}"
+                           autocomplete="off"/>
+                    <div class="login-center-input-text">密码</div>
+                </div>
+            </div>
+            <!--<div class="login-center clearfix">
+                <div class="login-center-img"><img
+                        th:src="@{${#themes.code('hanchuang.login.images.path')}+'/password.png'}"/></div>
+                <div class="login-center-input">
+                    <input type="email" name="" value="" placeholder="请输入您的电子邮箱" onfocus="this.placeholder=''"
+                           onblur="this.placeholder='请输入您的电子邮箱'"
+
+                           th:field="*{email}"
+                           autocomplete="off"/>
+                    <div class="login-center-input-text">E-Mail</div>
+                </div>
+            </div>-->
+            <div class="login-center clearfix">
+                <div class="login-center-img"><img
+                        th:src="@{${#themes.code('hanchuang.login.images.path')}+'/password.png'}"/></div>
+                <div class="login-center-input">
+                    <input type="tel" name="" value="" placeholder="请输入您的联系电话" onfocus="this.placeholder=''"
+                           onblur="this.placeholder='请输入您的联系电话'"
+                           th:field="*{telephone}"
+                           autocomplete="off"/>
+                    <div class="login-center-input-text">联系电话</div>
+                </div>
+            </div>
+            <!--验证码-->
+            <div class="login-center clearfix">
+                <!--<div class="login-center-input">-->
+                    <input style="float: left;width: 140px;margin-left: 15px;height: 30px;position: relative;" type="text" name="" id="code" placeholder="请输入验证码"
+                           onblur="checkCapcha(this.value)"
+                           th:field="*{capcha}"
+                           autocomplete="off"/>
+                    <img id="captcha_img" th:src="@{/captcha}" onclick="changeCode()"/>
+                <!--</div>-->
+            </div>
+            <section class="row"
+                     th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey != null AND !recaptchaInvisible}">
+                <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
+            </section>
+            <!--<div class="login-button">
+                登陆
+            </div>-->
+            <div class="login-center clearfix">
+                <div class="login-center-input">
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                    <input type="hidden" name="_eventId" value="submit"/>
+                    <input type="hidden" name="geolocation"/>
+                    <input class="btn btn-submit btn-block btn_login"
+                           style="cursor: pointer;width: 250px;text-align: center;height: 40px;line-height: 40px;background-color: dodgerblue;border-radius: 5px;margin: 0 auto;color: white;"
+                           name="submit" id="submit"
+                           accesskey="l"
+                           tabindex="6"
+                           type="submit"/>
+                </div>
+            </div>
+            <div class="alert login-center alert-danger" th:if="${#fields.hasErrors('*')}">
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">Example error</span>
+            </div>
+        </div>
+    </form>
+    <div class="sk-rotating-plane"></div>
+    <div th:replace="fragments/loginsidebar :: loginsidebar"/>
+</div>
+
+<!-- scripts -->
+<!--<script th:src="@{${#themes.code('hanchuang.javascript.particles.min.js')}}"></script>-->
+<!--<script th:src="@{${#themes.code('hanchuang.javascript.app')}}"></script>-->
+<script type="text/javascript" th:inline="javascript">
+    var i = [[#{screen.welcome.button.loginwip}]];
+    $(document).ready(function () {
+        $("#fm1").submit(function () {
+            $(".login").addClass("active");
+            setTimeout(function () {
+                $(".sk-rotating-plane").addClass("active");
+                $(".login")[0].style.display = "none";
+            }, 800);
+            setTimeout(function () {
+                $(".login").removeClass("active");
+                $(".sk-rotating-plane").removeClass("active");
+                $(".login")[0].style.display = "block";
+                // login();
+                // alert("登录成功");
+                $("#submit").attr("disabled", true);
+                $("#submit").attr("value", i);
+                console.log(i);
+                return true;
+            }, 5000);
+        });
+    });
+
+    function changeCode() {
+        var node = document.getElementById("captcha_img");
+        //修改验证码
+        if (node) {
+            node.src = node.src + '?id=' + uuid();
+        }
+    }
+
+    function uuid() {
+        //获取系统当前的时间
+        var d = new Date().getTime();
+        //替换uuid里面的x和y
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            //取余 16进制
+            var r = (d + Math.random() * 16) % 16 | 0;
+            //向下去整
+            d = Math.floor(d / 16);
+            //toString 表示编程16进制的数据
+            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+        return uuid;
+    };
+
+    function checkCapcha(_val){
+        if(_val == null || "" == _val.trim()){
+            alert("验证码不能为空！");
+            $("#code").val("");
+            changeCode();
+            return false;
+        }
+        $.ajax({
+            url: "/cas/chkCode",// 后台接口地址
+            type: 'post',// 请求方式  get/post
+            data:{
+                code:_val,
+                codes:"123321"
+            },
+            dataType: 'json', // 参数类型：json格式
+            async: false,
+            success: function(data) {
+                console.log("后台返回的json数据"+JSON.stringify(data));
+                if(data.issuccess){
+                    alert(data.msg);
+                }else{
+                    alert(data.msg);
+                    $("#code").val("");
+                    changeCode();
+                }
+            },
+            error: function (data) {
+                alert("warn："+JSON.stringify(data)) // 异常信息弹窗提醒
+            }
+
+        });
+    }
+</script>
+</body>
+</html>
